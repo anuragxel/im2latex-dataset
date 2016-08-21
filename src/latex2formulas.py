@@ -5,20 +5,20 @@
 #  Parses tar files of latex files for formulas
 #
 #  © Copyright 2016, Anssi "Miffyli" Kanervisto
-#  
+#
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation, either version 3 of the License, or
 #  (at your option) any later version.
-#  
+#
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
-#  
+#
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#  
+#
 import re
 import tarfile
 import os
@@ -42,7 +42,7 @@ def get_formulas(latex):
     for pattern in PATTERNS:
         res = re.findall(pattern, latex, re.DOTALL)
         #Remove short ones
-        res = [x.strip().replace("\n","") for x in res if 
+        res = [x.strip().replace("\n","") for x in res if
                MAX_LENGTH > len(x.strip()) > MIN_LENGTH]
         ret.extend(res)
     return ret
@@ -68,7 +68,7 @@ def main(directory):
     formulas = list(set(formulas))
     print("Parsed {} formulas".format(len(formulas)))
     print("Saving formulas...")
-    
+
     """ Leftover just in case removing \n from formulas is bad somehow
     ctr = 0
     try:
@@ -80,14 +80,19 @@ def main(directory):
             f.write(formula)
         ctr += 1
     """
-    
+
     with open("formulas.txt", "w") as f:
         f.write("\n".join(formulas))
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
-        print("usage: latex2formulas tar_directory\n"+    
+        print("usage: latex2formulas tar_directory\n"+
               "tar_directory should hold .tar files containing latex sources")
     else:
-        main(sys.argv[1])
-
+        dir_path = sys.argv[1]
+        if os.path.isdir(dir_path):
+            dir_path = os.path.abspath(dir_path) + '/'
+        else:
+            print("Directory doesn't exist")
+            exit()
+        main(dir_path)
